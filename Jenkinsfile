@@ -2,8 +2,8 @@ pipeline {
 
    agent {
       kubernetes {
-         label 'jenkins-slave'
-         yamlFile 'kube-terraform.yaml'
+         image 'hashicorp/terraform:light'
+         args '--entrypoint ""'
       }
    }
 
