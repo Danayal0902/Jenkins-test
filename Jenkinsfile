@@ -11,13 +11,13 @@ pipeline {
    }
 
    stages {
-      stage('Keys') {
-         steps {
-            container('terraform') {
-               sh "rm -rf ~/.ssh/ && mkdir -p ~/.ssh && ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
-            }
-         }
-      }
+    //   stage('Keys') {
+    //      steps {
+    //         container('terraform') {
+    //            sh "rm -rf ~/.ssh/ && mkdir -p ~/.ssh && ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
+    //         }
+    //      }
+    //   }
 
       stage('init') {
           steps {
