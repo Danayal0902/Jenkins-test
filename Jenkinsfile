@@ -1,10 +1,13 @@
 pipeline {
 
    agent {
-      docker {
-         image 'hashicorp/terraform:light'
-         args '--entrypoint ""'
-      }
+       node {
+           label 'master'
+       }
+    //   docker {
+    //      image 'hashicorp/terraform:light'
+    //      args '--entrypoint ""'
+    //   }
    }
 
    stages {
