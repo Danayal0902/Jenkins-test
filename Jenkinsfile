@@ -1,10 +1,13 @@
 pipeline {
 
    agent {
-      kubernetes {
-         label 'jenkins-slave'
-         yamlFile 'kube-terraform.yaml'
-      }
+       node {
+           label 'master'
+       }
+    //   kubernetes {
+    //      label 'jenkins-slave'
+    //      yamlFile 'kube-terraform.yaml'
+    //   }
    }
 
    stages {
