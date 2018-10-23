@@ -1,54 +1,44 @@
 pipeline {
 
    agent {
-       node {
-           label 'master'
-       }
-    //   kubernetes {
-    //      label 'jenkins-slave'
-    //      yamlFile 'kube-terraform.yaml'
-    //   }
+      kubernetes {
+         label 'jenkins-slave'
+         yamlFile 'kube-terraform.yaml'
+      }
    }
 
    stages {
-    //   stage('Keys') {
-    //      steps {
-    //         container('terraform') {
-    //            sh "rm -rf ~/.ssh/ && mkdir -p ~/.ssh && ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
-    //         }
-    //      }
-    //   }
+      stage('Keys') {
+         steps {
+            container('terraform') {
+               sh "rm -rf ~/.ssh/ && mkdir -p ~/.ssh && ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
+            }
+         }
+      }
 
       stage('init') {
           steps {
-              sh """
-                ${TERRAFORM_CMD} init -backend=true -input=false
-                """
+              sh 'terraform init -force-copy'
+          }
+      }
+
+      stage('validate') {
+          steps {
+              sh 'terraform validate'
           }
       }
 
       stage('plan') {
           steps {
-              sh """
-                ${TERRAFORM_CMD} plan -out=tfplan -input=false
-                """
-              script {
-                  timeout(time: 10, unit: 'MINUTES') {
-                      input(id: "Deploy", "Deploy ${params.project_name}?", ok: 'Deploy')
-                  }
-              }  
+              sh "terraform get && terraform plan"
           }
       }
 
       stage('apply') {
           steps {
-              sh """
-                ${TERRAFORM_CMD} apply -lock=false -input=false -auto-approve
-                -var aws_access_key=${env.AWS_ACCESS_KEY_ID} -var aws_secret_key=${env.AWS_SECRET_ACCESS_KEY} 
-                tfplan
-                output address
-                """
-                // This should be added to persistent storage so the app pipeline script can read it
+            sh "terraform get && apply -auto-approve -var aws_access_key=${env.AWS_ACCESS_KEY_ID} -var aws_secret_key=${env.AWS_SECRET_ACCESS_KEY}"
+            sh "terraform output address"
+            // This should be added to persistent storage so the app pipeline script can read it
           }
       }
 
