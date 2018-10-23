@@ -1,7 +1,7 @@
 pipeline {
 
    agent {
-      kubernetes {
+      docker {
          image 'hashicorp/terraform:light'
          args '--entrypoint ""'
       }
